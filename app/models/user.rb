@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }, uniqueness: {case_sensitive: false}
 
   has_one :plan
+  has_many :lists
   has_many :subscriptions, :foreign_key => :follower_id
   has_many :followed_users, :through => :subscriptions, :source => :followed_user
 
@@ -49,20 +50,6 @@ class User < ActiveRecord::Base
   def unread_subscriptions
     self.subscriptions.select do |subscription|
       subscription.read_time < subscription.followed_user.plan.updated_at
-    end
-  end
-
-  def self.search(params)
-    if params[:query] && params[:query].length > 0
-    s = Tire.search 'users' do
-      query do
-        string "content:#{params[:query]}"
-      end
-
-      filter :terms, :username => [params[:username]] if params[:username]
-      filter :terms, :email => [params[:email]] if params[:email]
-    end
-    s.results
     end
   end
 end

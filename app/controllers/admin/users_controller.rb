@@ -25,11 +25,15 @@ class Admin::UsersController < ApplicationController
 
 	private
 		def admin_user
-	    redirect_to_last_page && flash_error unless current_user.admin?
+	    redirect_to 'signout' && flash_error unless current_user.admin?
 	  end
 
 	  def create_plan(user)
-	  	user.plan = Plan.new
+	  	user.plan = Plan.new(:permalink => user.username)
     	user.save!
+    end
+
+    def flash_error
+      flash[:error] = "You are not logged in as the correct user"
     end
 end

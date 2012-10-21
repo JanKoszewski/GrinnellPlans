@@ -11,8 +11,11 @@ Gplans::Application.routes.draw do
   end
 
   resources :plans
-  resources :users, only: [:new, :show, :update, :create, :edit]
   resources :subscriptions, only: [:new, :update, :create, :destroy]
-
+  resources :users, only: [:new, :show, :update, :create, :edit] do
+    resources :lists
+  end
+  
+  
   root :to => "plans#index"
 end

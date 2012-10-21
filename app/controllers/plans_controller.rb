@@ -6,6 +6,7 @@ class PlansController < ApplicationController
 
 	def show
 		@plan = Plan.find_by_permalink(params[:id])
+    @subscription = Subscription.new
 		Subscription.mark_plan_as_read(current_user.id, @plan.user.id)
 	end
 
@@ -25,7 +26,8 @@ class PlansController < ApplicationController
   private 
   	def ensure_plan_ownership
   		unless current_user.plan == Plan.find(params[:id])
-  			redirect_to 'signout'
+  			redirect_to root_path
+        flash[:error] = "Unauthorized action"
   		end
   	end
 end

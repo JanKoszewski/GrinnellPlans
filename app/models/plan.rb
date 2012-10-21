@@ -1,5 +1,5 @@
 class Plan < ActiveRecord::Base
-  before_save :add_permalink
+  after_create :create_lists
   
 	include Tire::Model::Search
   include Tire::Model::Callbacks
@@ -11,8 +11,11 @@ class Plan < ActiveRecord::Base
     permalink
   end
 
-  def add_permalink
-    self.permalink = self.user.username
+  def create_lists
+    3.times do |list|
+      self.user.lists << List.new(:title => "Level #{list+1}")
+      self.user.save!
+    end
   end
 
   def self.search(params)
@@ -22,6 +25,7 @@ class Plan < ActiveRecord::Base
         string "content:#{params[:query]}"
       end
 
+      filter :terms, :permalink => [params[:permalink]] if params[:permalink]
       filter :terms, :title => [params[:title]] if params[:title]
       filter :terms, :body => [params[:body]] if params[:body]
     end

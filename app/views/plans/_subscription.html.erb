@@ -1,0 +1,22 @@
+<% if current_user.subscribed?(@plan.user.id) %>
+	<ul>
+		<li>
+		<%= form_for(@subscription, :html => { :class => "form form-horizontal" } ) do |f| %>
+  		<%= f.label :lists %>
+  		<%= f.select :list_id, current_user.lists.collect {|l| [ l.title, l.id ] }, {}, :multiple=>true, :id => "lists"%><br /><br />
+
+  		<%= f.submit %>
+  
+		<% end %>
+	  <%= link_to 'Change plan subscription level', subscription_path(:followed_user_id => @plan.user.id),
+	    :method => :put, :class => "subscription-btn btn btn-primary btn-small" %>
+	  </li>
+	  <li>
+	  <%= link_to 'Delete Subscription', subscription_path(current_subscription),
+	    :method => :delete, :class => "subscription-btn btn btn-primary btn-small" %>
+	  </li>
+   </ul>
+<% else %>
+  <%= link_to 'Subscribe to plan', subscriptions_path(:followed_user_id => @plan.user.id),
+    :method => :post, :class => "subscription-btn btn btn-primary btn-small" %>
+<% end %>
