@@ -1,0 +1,5 @@
+<ul>
+	<% current_user.unread_subscriptions.each do |subscription| %>
+		<li><%= link_to subscription.followed_user.username, plan_path(subscription.followed_user.username) %></li>
+	<% end %>
+</ul>

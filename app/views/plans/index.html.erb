@@ -1,0 +1,5 @@
+<% if current_user.admin? %>
+	<div>
+		<%= link_to('Approve Users', admin_users_path) %>	
+	</div>
+<% end %>

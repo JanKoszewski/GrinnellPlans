@@ -1,0 +1,9 @@
+<% if current_user.subscribed?(@plan.user.id) %>
+  <%= link_to 'Change plan subscription level', subscription_path(:followed_user_id => @plan.user.id),
+    :method => :put, :class => "subscription-btn btn btn-primary btn-small" %>
+  <%= link_to 'Delete Subscription', subscription_path(current_subscription),
+    :method => :delete, :class => "subscription-btn btn btn-primary btn-small" %>
+<% else %>
+  <%= link_to 'Subscribe to plan', subscriptions_path(:followed_user_id => @plan.user.id),
+    :method => :post, :class => "subscription-btn btn btn-primary btn-small" %>
+<% end %>

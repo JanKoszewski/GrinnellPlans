@@ -9,6 +9,9 @@ gem 'sqlite3'
 gem 'json'
 gem 'devise'
 gem 'jquery-rails'
+gem 'haml'
+gem 'kaminari'
+gem 'tire'
 
 # Gems used only for assets and not required
 # in production environments by default.

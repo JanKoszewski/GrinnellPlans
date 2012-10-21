@@ -1,0 +1,37 @@
+<div class="plan">
+  <div id="header">
+    <ul>
+      <li class="username">
+        <span class="title"><%= t(:'plans.show.username') %></span>
+        <span class="value"><%= @plan.user.username %></span>
+      </li>
+      <li class="lastupdated">
+        <span class="title"><%= t(:'plans.show.last_updated') %></span>
+        <span class="value">
+          <span class="long"><%= @plan.updated_at %></span>
+          <span class="short"><%= @plan.updated_at %></span>
+        </span>
+      </li>
+      <li class="lastlogin">
+        <span class="title"><%= t(:'plans.show.last_login') %></span>
+        <span class="value">
+          <span class="long"><%= @plan.user.last_sign_in_at %></span>
+          <span class="short"><%= @plan.user.last_sign_in_at %></span>
+        </span>
+      </li>
+      <li class="lastlogin">
+        <span class="title"><%= t(:'plans.show.plan_name') %></span>
+        <span class="value">
+          <%= @plan.user.username %>
+        </span>
+      </li>
+    </ul>
+  </div>
+<div class="plan_text">
+  <%= @plan.body %>
+</div>
+<div class="subscription" >
+  <% unless @plan == current_user.plan %>
+    <%= render 'shared/subscription' %>
+  <% end %>
+</div>

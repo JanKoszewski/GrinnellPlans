@@ -1,0 +1,8 @@
+<ul>
+	<li>
+  	<%= link_to('Edit Plan', edit_plan_path(:id => current_user.plan.id)) %>
+	</li>
+	<li>
+  	<%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
+	</li>
+</ul>

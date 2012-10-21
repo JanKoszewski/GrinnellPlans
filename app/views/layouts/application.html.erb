@@ -7,8 +7,23 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-<%= yield %>
-
+  <% if user_signed_in? %>
+    <%= render 'shared/nav' %>
+    <%= render 'shared/autofinger' %>
+  <% else %>
+    <li>
+    <%= link_to('Login', new_user_session_path)  %>
+    </li>
+  <% end %>
+	<div class="container" id="main">
+    <% flash.each do |key, value| %>
+      <div class="alert alert-<%= key %>"><%= value %></div>
+    <% end %>
+    <div class="row">
+      <div class="span10 offset1">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -32,6 +32,10 @@ Gplans::Application.configure do
   # Do not compress assets
   config.assets.compress = false
 
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+  # the I18n.default_locale when a translation can not be found)
+  config.i18n.fallbacks = true
+
   # Expands the lines which load the assets
   config.assets.debug = true
 end

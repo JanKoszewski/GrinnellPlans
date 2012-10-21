@@ -1,0 +1,6 @@
+<div id="editform">
+  <%= form_for @plan, :url => {:action=>:update, :controller=>:plans } do |f| %>
+    <%= f.text_area :body %>
+    <%= f.submit 'Update Plan', :class => "button primary" %>
+   <% end %>
+</div>
