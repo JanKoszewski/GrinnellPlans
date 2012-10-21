@@ -1,5 +1,5 @@
 class Subscription < ActiveRecord::Base
-  attr_accessible :followed_user_id, :followed_user
+  attr_accessible :followed_user_id, :followed_user, :priority
   belongs_to :follower, :class_name => "User", :foreign_key => "follower_id"
   belongs_to :followed_user, :class_name => "User", :foreign_key => "followed_user_id"
 
