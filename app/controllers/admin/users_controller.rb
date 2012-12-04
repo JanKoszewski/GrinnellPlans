@@ -1,6 +1,6 @@
 class Admin::UsersController < ApplicationController
 	before_filter :authenticate_user!
-  before_filter :ensure_admin_user
+  before_filter :admin_user
 
 	def index
 		@users = User.all
@@ -27,7 +27,7 @@ class Admin::UsersController < ApplicationController
 		def admin_user
       unless current_user.admin?
         redirect_to root_path
-        flash[:error] = "You are not logged in as the correct user"
+        flash[:error] = "Unauthorized action"
       end
 	  end
 
