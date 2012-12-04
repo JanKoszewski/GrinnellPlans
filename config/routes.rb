@@ -1,4 +1,4 @@
-Gplans::Application.routes.draw do
+Plans::Application.routes.draw do
   devise_for :users
 
   match '/signup',  to: 'users#new'
