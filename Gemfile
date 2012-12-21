@@ -25,7 +25,7 @@ end
 group :test do
   gem 'capybara-webkit'
   gem 'capybara'
-  gem 'mocha'
+  gem 'mocha/setup'
   gem 'rspec-rails'
 end
 
@@ -33,6 +33,10 @@ group :test, :development do
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'jasmine-headless-webkit', '0.9.0.rc.2'
+  gem 'rspec-rails'
+  gem 'capybara-webkit'
+  gem 'capybara'
+  gem 'mocha'
 end
 
 
