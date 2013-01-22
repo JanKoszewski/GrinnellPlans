@@ -31,6 +31,9 @@ GEM
     addressable (2.3.2)
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
+    better_errors (0.3.2)
+      coderay (>= 1.0.0)
+      erubis (>= 2.7.0)
     builder (3.0.4)
     capybara (1.1.4)
       mime-types (>= 1.16)
@@ -44,6 +47,7 @@ GEM
       json
     childprocess (0.3.6)
       ffi (~> 1.0, >= 1.0.6)
+    coderay (1.0.8)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -129,6 +133,7 @@ GEM
     rake (10.0.3)
     rdoc (3.12)
       json (~> 1.4)
+    redcarpet (2.0.1)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec-core (2.12.2)
@@ -143,6 +148,8 @@ GEM
       rspec-expectations (~> 2.12.0)
       rspec-mocks (~> 2.12.0)
     rubyzip (0.9.9)
+    sanitize (2.0.3)
+      nokogiri (>= 1.4.4, < 1.6)
     sass (3.2.4)
     sass-rails (3.2.5)
       railties (~> 3.2.0)
@@ -189,6 +196,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  better_errors
   capybara
   capybara-webkit
   coffee-rails (~> 3.2.1)
@@ -202,7 +210,9 @@ DEPENDENCIES
   kaminari
   mocha
   rails (= 3.2.6)
+  redcarpet
   rspec-rails
+  sanitize
   sass-rails (~> 3.2.3)
   sqlite3
   tire

@@ -12,6 +12,8 @@ gem 'jquery-rails'
 gem 'haml'
 gem 'kaminari'
 gem 'tire'
+gem 'sanitize'
+gem 'redcarpet'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -30,6 +32,7 @@ group :test, :development do
   gem 'rspec-rails'
   gem 'capybara-webkit'
   gem 'capybara'
+  gem 'better_errors'
 end
 
 # Use unicorn as the app server

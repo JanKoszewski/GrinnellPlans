@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
 
   has_one :plan
   has_many :subscriptions, :foreign_key => :follower_id
+  has_many :mentions, :foreign_key => :mentioned_id
   has_many :followed_users, :through => :subscriptions, :source => :followed_user
 
   attr_accessor :login
@@ -30,16 +31,16 @@ class User < ActiveRecord::Base
     end
   end
 
-  def active_for_authentication? 
-    super && approved? 
-  end 
+  def active_for_authentication?
+    super && approved?
+  end
 
-  def inactive_message 
-    if !approved? 
-      :not_approved 
-    else 
+  def inactive_message
+    if !approved?
+      :not_approved
+    else
       super
-    end 
+    end
   end
 
   def subscribed?(followed_user_id)
