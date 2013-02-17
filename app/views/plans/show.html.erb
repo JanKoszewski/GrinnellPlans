@@ -28,7 +28,7 @@
     </ul>
   </div>
 <div class="plan_text">
-  <%= @plan.body.html_safe %>
+  <%= @plan.html.html_safe %>
 </div>
 <div class="subscription" >
   <% unless @plan == current_user.plan %>

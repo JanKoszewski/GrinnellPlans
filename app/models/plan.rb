@@ -1,6 +1,6 @@
 class Plan < ActiveRecord::Base
   before_save :add_permalink
-  before_save :clean_text
+  before_save :generate_html
 
 	include Tire::Model::Search
   include Tire::Model::Callbacks
@@ -16,23 +16,23 @@ class Plan < ActiveRecord::Base
     self.permalink = self.user.username
   end
 
-  def links_array
-    links = []
-    scan_for_matches.each do |result|
-      links << find_link(result)
-    end
-    links
-  end
+  # def links_array
+  #   links = []
+  #   scan_for_matches.each do |result|
+  #     links << find_link(result)
+  #   end
+  #   links
+  # end
 
   def scan_for_matches
-    self.body.scan(/.*?\[(.*?)\].*?/s)
+    self.html.scan(/.*?\[(.*?)\].*?/s)
   end
 
   def find_link(result)
     potential_pair = result.first.scan(/^(.+)[|](.+)$/).first
 
     if potential_pair
-      {uri: URI.extract(potential_pair.first, ['http', 'https']).first }
+      {uri: URI.extract(potential_pair.first, ['http', 'https']).first, text: potential_pair.last }
     else
       {plan: result.first }
     end
@@ -40,16 +40,26 @@ class Plan < ActiveRecord::Base
 
   def create_link(result)
     hash = find_link(result)
-    puts "**** hash.keys.first = #{hash.keys.first}"
-    puts "**** hash.values.first = #{hash.values.first}"
-    hash.keys.first == :uri ? "<a href=#{hash.values.first}>" : "<a href=https://gplans.com/plans/#{hash.values.first}"
+    hash.keys.first == :uri ? external_link(hash) : plan_link(hash)
+  end
+
+  def external_link(hash={})
+    "<a href=#{hash[:uri]}>#{hash[:text]}</a>"
+  end
+
+  def plan_link(hash={})
+    "<a href=https://gplans.com/plans/#{hash[:plan]}>#{hash[:plan]}</a>"
   end
 
   def replace_links
-    scan_for_matches.each do |result|
-      self.body.gsub!(Regexp.new(result.first), create_link(result))
+    scan_for_matches.uniq.each do |result|
+      self.html.gsub!(Regexp.new(Regexp.escape(result.first)), create_link(result))
     end
-    puts "**** self.body = #{self.body}"
+  end
+
+  def generate_html
+    self.html = self.body
+    replace_links
   end
 
   # def clean_text
@@ -85,7 +95,7 @@ class Plan < ActiveRecord::Base
 
   #   # TODO make actual rails links
   #    checked = {}
-  #    loves = self.body.scan(/.*?\[(.*?)\].*?/s)#get an array of everything in brackets
+     # loves = self.body.scan(/.*?\[(.*?)\].*?/s)#get an array of everything in brackets
   #   logger.debug("self.plan________"+self.body)
   #    for love in loves
   #      item = love.first
@@ -95,7 +105,7 @@ class Plan < ActiveRecord::Base
   #        if user.blank?
   #          # if item.match(/^\d+$/) && SubBoard.find(:first, :conditions=>{:messageid=>item})
   #          #   #TODO  Regexp.escape(item, "/")
-  #          #   self.body.gsub!(/\[" . Regexp.escape(item) . "\]/s, "[<a href=\"board_messages.php?messagenum=$item#{item}\" class=\"boardlink\">#{item}</a>]")
+             # self.body.gsub!(/\[" . Regexp.escape(item) . "\]/s, "[<a href=\"board_messages.php?messagenum=$item#{item}\" class=\"boardlink\">#{item}</a>]")
   #          # end
   #          if item =~ /:/
   #            if item =~ /|/
