@@ -16,7 +16,7 @@ class Plan < ActiveRecord::Base
     self.permalink = self.user.username
   end
 
-  def clean_text
+  def links_array
     links = []
     scan_for_matches.each do |result|
       links << find_link(result)
@@ -32,10 +32,24 @@ class Plan < ActiveRecord::Base
     potential_pair = result.first.scan(/^(.+)[|](.+)$/).first
 
     if potential_pair
-      URI.extract(potential_pair.first, ['http', 'https']).first
+      {uri: URI.extract(potential_pair.first, ['http', 'https']).first }
     else
-      result.first
+      {plan: result.first }
     end
+  end
+
+  def create_link(result)
+    hash = find_link(result)
+    puts "**** hash.keys.first = #{hash.keys.first}"
+    puts "**** hash.values.first = #{hash.values.first}"
+    hash.keys.first == :uri ? "<a href=#{hash.values.first}>" : "<a href=https://gplans.com/plans/#{hash.values.first}"
+  end
+
+  def replace_links
+    scan_for_matches.each do |result|
+      self.body.gsub!(Regexp.new(result.first), create_link(result))
+    end
+    puts "**** self.body = #{self.body}"
   end
 
   # def clean_text

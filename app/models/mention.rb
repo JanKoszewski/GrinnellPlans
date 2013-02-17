@@ -1,5 +1,5 @@
 class Mention < ActiveRecord::Base
-  attr_accessible :mentioned_user_id, :mentioned_user
+  attr_accessible :mentioned_user_id, :mentioned_user, :surround_text
   belongs_to :mentioned, :class_name => "User", :foreign_key => "mentioned_id"
   belongs_to :mentioned_user, :class_name => "User", :foreign_key => "mentioned_user_id"
 
