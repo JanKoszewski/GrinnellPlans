@@ -9,18 +9,17 @@
     sudo gem install bundler
 
 4. Checkout the project
-    git clone git@github.com:annaswims/GrinnellPlans.git
+    git clone git@github.com:JanKoszewski/GrinnellPlans.git
     cd GrinnellPlans
 
 5. Install the gems that are specified in Gemfile
     bundle install
 
-6. Create the database (specified in database yml) and seed it with data
+6. Create the database
     rake db:setup
 
 7. Start the server. GrinnellPlans will be at http://localhost:3000
     rails server
-
 
 === Helpful Tasks
 
