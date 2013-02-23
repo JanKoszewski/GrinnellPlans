@@ -53,8 +53,14 @@ class Plan < ActiveRecord::Base
     text
   end
 
+  def replace_line_breaks(text)
+    text.gsub!(/\r\n|\r|\n/, "<br>")
+  end
+
   def html
-    replace_links(self.body)
+    text = self.body
+    replace_links(text)
+    replace_line_breaks(text)
   end
 
   def self.search(params)
