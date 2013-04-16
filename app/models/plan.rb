@@ -20,7 +20,11 @@ class Plan < ActiveRecord::Base
 
   def scan_for_matches(text)
     matches = text.scan(/.*?\[(.*?)\].*?/s)
-    matches.uniq.delete_if { |result| result.first.blank? }
+    matches.delete_if { |result| result.first.blank? }
+  end
+
+  def unique_matches(text)
+    scan_for_matches(text).uniq
   end
 
   def find_link(result)
@@ -28,8 +32,10 @@ class Plan < ActiveRecord::Base
 
     if potential_pair
       {uri: URI.extract(potential_pair.first, ['http', 'https']).first, text: potential_pair.last }
-    else
+    elsif Plan.find_by_permalink(result.first)
       {plan: result.first }
+    else
+      {nonlink: result.first} #NEED TO DECIDE WHAT TO DO WITH THESE
     end
   end
 
@@ -47,7 +53,7 @@ class Plan < ActiveRecord::Base
   end
 
   def replace_links(text)
-    scan_for_matches(text).each do |result|
+    unique_matches(text).each do |result|
       text.gsub!(Regexp.new(Regexp.escape("["+result.first+"]")), create_link(result))
     end
     text
@@ -61,6 +67,11 @@ class Plan < ActiveRecord::Base
     text = self.body
     replace_links(text)
     replace_line_breaks(text)
+  end
+
+  def create_mention(result)
+    array = self.body.scan(/(.{4})?\[(#{result.first})\](.{4})?/)
+    Mention.create_from_plan_link(array, self.user.id)
   end
 
   def self.search(params)
