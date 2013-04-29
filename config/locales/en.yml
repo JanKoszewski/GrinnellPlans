@@ -2,10 +2,13 @@
 en:
   plans:
     show:
-      username: "Username:"
-      last_updated: "Last Updated:"
       last_login: "Last Login:"
+      last_updated: "Last Updated:"
       plan_name: "Plan Name:"
+      username: "Username:"
   nav:
+    edit_plan: "Edit Plan"
     login: "Login"
     logout: "Logout"
+  mentions:
+    has_mentioned: "%{username} has mentioned you!"

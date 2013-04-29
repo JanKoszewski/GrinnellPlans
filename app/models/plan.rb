@@ -6,7 +6,6 @@ class Plan < ActiveRecord::Base
   include Tire::Model::Callbacks
 
   attr_accessible :title, :body, :permalink
-  attr_accessor :html
 
   belongs_to :user
 
@@ -71,11 +70,18 @@ class Plan < ActiveRecord::Base
 
   def replace_line_breaks(text)
     text.gsub!(/\r\n|\r|\n/, "<br>")
+    text
+  end
+
+  def replace_date_markup(text)
+    text.gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.to_s}</b>")
+    text
   end
 
   def html
     if self.body.present?
       text = self.body
+      replace_date_markup(text)
       replace_links(text)
       replace_line_breaks(text)
     else

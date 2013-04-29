@@ -1,8 +1,20 @@
-<ul>
-	<li>
-  	<%= link_to('Edit Plan', edit_plan_path(current_user.username)) %>
-	</li>
-	<li>
-  	<%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
-	</li>
-</ul>
+<div class="plans-maintenance">
+  <ul>
+    <li>
+      <%= link_to(t(:"nav.edit_plan"), edit_plan_path(current_user.username)) %>
+    </li>
+    <li>
+      <%= link_to(t(:"nav.logout"), destroy_user_session_path, :method => :delete) %>
+    </li>
+  </ul>
+</div>
+<div class="mentions">
+  <ul>
+    <% current_user.mentions.each do |mention| %>
+      <li>
+        <%= link_to(t(:"mentions.has_mentioned", username: mention.mentioned_user.username), plan_path(mention.mentioned_user.username)) %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
