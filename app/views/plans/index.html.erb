@@ -1,5 +1,11 @@
 <% if current_user.admin? %>
 	<div>
-		<%= link_to('Approve Users', admin_users_path) %>	
+		<%= link_to('Approve Users', admin_users_path) %>
 	</div>
+<% end %>
+
+<% @plans.each do |plan| %>
+  <div>
+    <%= link_to plan.permalink, plan_path(plan.permalink) %>
+  </div>
 <% end %>

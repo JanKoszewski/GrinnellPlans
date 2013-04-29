@@ -12,7 +12,7 @@ class SubscriptionsController < ApplicationController
 
 	def create
     followed_user = User.find(params[:followed_user_id])
-    current_user.subscriptions.create(:followed_user_id => params[:followed_user_id])
+    current_user.subscriptions.create(followed_user_id: params[:followed_user_id])
     redirect_to :back, :notice => "You've subscribed to #{followed_user.username}'s plan! Way to go there!"
   end
 

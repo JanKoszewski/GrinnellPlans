@@ -2,6 +2,7 @@ class PlansController < ApplicationController
 	before_filter :ensure_plan_ownership, :only => [:edit, :update]
 
 	def index
+    @plans = Plan.all
 	end
 
 	def show

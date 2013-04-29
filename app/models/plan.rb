@@ -31,17 +31,27 @@ class Plan < ActiveRecord::Base
     potential_pair = result.first.scan(/^(.+)[|](.+)$/).first
 
     if potential_pair
-      {uri: URI.extract(potential_pair.first, ['http', 'https']).first, text: potential_pair.last }
+      { uri: URI.extract(potential_pair.first, ['http', 'https']).first, text: potential_pair.last }
     elsif Plan.find_by_permalink(result.first)
-      {plan: result.first }
+      create_mention(result)
+      { plan: result.first }
     else
-      {nonlink: result.first} #NEED TO DECIDE WHAT TO DO WITH THESE
+      { plan: result.first }
+      # { nonlink: result.first } NEED TO DECIDE WHAT TO DO WITH THESE
     end
   end
 
   def create_link(result)
     hash = find_link(result)
-    hash.keys.first == :uri ? external_link(hash) : plan_link(hash)
+
+    case hash.keys.first
+    when :uri
+      external_link(hash)
+    when :plan
+      plan_link(hash)
+    else
+      plan_link(hash)
+    end
   end
 
   def external_link(hash={})
@@ -64,14 +74,22 @@ class Plan < ActiveRecord::Base
   end
 
   def html
-    text = self.body
-    replace_links(text)
-    replace_line_breaks(text)
+    if self.body.present?
+      text = self.body
+      replace_links(text)
+      replace_line_breaks(text)
+    else
+      ""
+    end
   end
 
   def create_mention(result)
-    array = self.body.scan(/(.{4})?\[(#{result.first})\](.{4})?/)
-    Mention.create_from_plan_link(array, self.user.id)
+    key = self.body.scan(/(.{6})?\[(#{result.first})\](.{6})?/).join
+    u = User.find_by_username(result)
+
+    unless Mention.find_by_mentioned_user_id_and_surround_text(self.user.id, key) && u.present?
+      u.mentions.create(mentioned_user_id: self.user.id, surround_text: key)
+    end
   end
 
   def self.search(params)
