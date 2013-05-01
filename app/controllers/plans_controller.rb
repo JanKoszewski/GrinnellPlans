@@ -8,6 +8,7 @@ class PlansController < ApplicationController
 	def show
 		@plan = Plan.find_by_permalink(params[:id])
 		Subscription.mark_plan_as_read(current_user.id, @plan.user.id)
+    Mention.mark_plan_as_read(current_user.id, @plan.user.id)
 	end
 
 	def edit
@@ -16,7 +17,7 @@ class PlansController < ApplicationController
 
 	def update
     @plan = current_user.plan
-    if @plan.update_attributes(params[:plan])
+    if sanitize_input_markup(params[:plan]) && @plan.update_attributes(params[:plan])
       redirect_to plan_path(current_user.username)
     else
       render :action => "edit"
@@ -30,4 +31,21 @@ class PlansController < ApplicationController
         flash[:error] = "Unauthorized action"
   		end
   	end
+
+    def sanitize_input_markup(submitted_plans_data)
+      remove_possible_javascript(submitted_plans_data)
+      replace_date_markup(submitted_plans_data)
+      submitted_plans_data
+    end
+
+    def replace_date_markup(submitted_plans_data)
+      submitted_plans_data["body"].gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.to_s}</b>")
+    end
+
+    def remove_possible_javascript(submitted_plans_data)
+      if possible_javascript = submitted_plans_data["body"].scan(/.*script.*/s).first
+        submitted_plans_data["body"].slice!(possible_javascript.first)
+      end
+      submitted_plans_data
+    end
 end

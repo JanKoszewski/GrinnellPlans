@@ -11,9 +11,11 @@
 <div class="mentions">
   <ul>
     <% current_user.mentions.each do |mention| %>
-      <li>
-        <%= link_to(t(:"mentions.has_mentioned", username: mention.mentioned_user.username), plan_path(mention.mentioned_user.username)) %>
-      </li>
+      <% if mention.unread %>
+        <li>
+          <%= link_to(t(:"mentions.has_mentioned", username: mention.mentioned_user.username), plan_path(mention.mentioned_user.username)) %>
+        </li>
+      <% end %>
     <% end %>
   </ul>
 </div>

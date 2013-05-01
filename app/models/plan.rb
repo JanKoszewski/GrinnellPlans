@@ -1,6 +1,7 @@
 class Plan < ActiveRecord::Base
 
   before_save :add_permalink
+  # after_save :replace_date_markup
 
 	include Tire::Model::Search
   include Tire::Model::Callbacks
@@ -58,7 +59,7 @@ class Plan < ActiveRecord::Base
   end
 
   def plan_link(hash={})
-    "[<a href=#{Rails.root.to_s}/plans/#{hash[:plan]}>#{hash[:plan]}</a>]"
+    "[<a href='/plans/#{hash[:plan]}'>#{hash[:plan]}</a>]"
   end
 
   def replace_links(text)
@@ -73,15 +74,14 @@ class Plan < ActiveRecord::Base
     text
   end
 
-  def replace_date_markup(text)
-    text.gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.to_s}</b>")
-    text
+  def replace_date_markup
+    self.body.gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.to_s}</b>")
+    puts "I replaced a date!"
   end
 
   def html
     if self.body.present?
       text = self.body
-      replace_date_markup(text)
       replace_links(text)
       replace_line_breaks(text)
     else
