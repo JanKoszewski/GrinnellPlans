@@ -1,7 +1,7 @@
 class Plan < ActiveRecord::Base
 
   before_save :add_permalink
-  # after_save :replace_date_markup
+  before_save :calculate_length_change
 
 	include Tire::Model::Search
   include Tire::Model::Callbacks
@@ -98,13 +98,21 @@ class Plan < ActiveRecord::Base
 
   def create_mention(result)
     if u = User.find_by_username(result)
-      keys = self.body.scan(/(.{6})?\[(#{result.first})\](.{6})?/)
+      keys = self.body.scan(/.{0,30}\[#{result.first}\].{0,30}/)
       keys.each do |key|
-        unless Mention.where(mentioned_user_id: self.user.id, surround_text: key.join).present?
-          u.mentions.create(mentioned_user_id: self.user.id, surround_text: key.join  )
+        unless Mention.where(mentioned_user_id: self.user.id, key: key, position: self.body.index(key) + self.change_in_length).present?
+          u.mentions.create(mentioned_user_id: self.user.id, key: key, position: self.body.index(key))
         end
       end
     end
+  end
+
+  def calculate_previous_length
+    self.previous_length = self.body.length
+  end
+
+  def calculate_length_change
+    self.change_in_length = self.previous_length - self.body.length
   end
 
   def self.search(params)

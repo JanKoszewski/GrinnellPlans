@@ -1,5 +1,5 @@
 class AddPermalinkToPlans < ActiveRecord::Migration
   def change
-  	add_column :subscriptions, :permalink, :string
+  	add_column :plans, :permalink, :string
   end
 end

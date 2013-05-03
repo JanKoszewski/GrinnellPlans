@@ -17,7 +17,7 @@ class PlansController < ApplicationController
 
 	def update
     @plan = current_user.plan
-    if sanitize_input_markup(params[:plan]) && @plan.update_attributes(params[:plan])
+    if sanitize_input_markup(params[:plan]) && @plan.calculate_previous_length && @plan.update_attributes(params[:plan])
       redirect_to plan_path(current_user.username)
     else
       render :action => "edit"
