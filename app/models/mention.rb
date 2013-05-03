@@ -6,21 +6,15 @@ class Mention < ActiveRecord::Base
   validates_uniqueness_of :surround_text, :scope => :mentioned_id
 
   def self.mark_plan_as_read(mentioned_id, mentioned_user_id)
-    if (mention = Mention.where(:mentioned_id => mentioned_id, :mentioned_user_id => mentioned_user_id).first)
-      mention.read_time = Time.now
-      mention.save!
+    if mentions = Mention.where(:mentioned_id => mentioned_id, :mentioned_user_id => mentioned_user_id)
+      mentions.each do |mention|
+        mention.read_time = Time.now
+        mention.save!
+      end
     end
   end
 
   def unread
-    self.read_time < created_at
+    self.read_time.nil?
   end
-
-#IDEA FOR UNIQUENESS:
-  #SAVE PLAN LENGTH AS ATTRIBUTE ON PLAN ON SAVE
-  #CHECK RELATIVE POSITION OF MENTION AS A DIFFERENCE OF PREVIOUS PLAN LENGTH BEFORE AND AFTER SAVE
-  #WORKS FOR EXPADNING PLANS, NOT NECESSARILY FOR DELETION (IF PLAN GETS SHORTER)
-  #QUESTIONS:
-    #HOW DO YOU DEFINE POSITION? BEGINNING OF KEY/SURROUND TEXT?
-
 end

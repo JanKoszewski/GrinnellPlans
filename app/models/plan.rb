@@ -36,8 +36,7 @@ class Plan < ActiveRecord::Base
       create_mention(result)
       { plan: result.first }
     else
-      { plan: result.first }
-      # { nonlink: result.first } NEED TO DECIDE WHAT TO DO WITH THESE
+      { nonlink: result.first }
     end
   end
 
@@ -50,7 +49,7 @@ class Plan < ActiveRecord::Base
     when :plan
       plan_link(hash)
     else
-      plan_link(hash)
+      non_link(hash)
     end
   end
 
@@ -60,6 +59,10 @@ class Plan < ActiveRecord::Base
 
   def plan_link(hash={})
     "[<a href='/plans/#{hash[:plan]}'>#{hash[:plan]}</a>]"
+  end
+
+  def non_link(hash={})
+    "[#{hash[:nonlink]}]"
   end
 
   def replace_links(text)
@@ -74,14 +77,18 @@ class Plan < ActiveRecord::Base
     text
   end
 
-  def replace_date_markup
-    self.body.gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.to_s}</b>")
-    puts "I replaced a date!"
+  def remove_possible_javascript(text)
+    possible_javascript = text.scan(/.*script.*/s)
+    if possible_javascript.present?
+      possible_javascript.each { |pj| text.slice!(pj) }
+    end
+    text
   end
 
   def html
     if self.body.present?
       text = self.body
+      remove_possible_javascript(text)
       replace_links(text)
       replace_line_breaks(text)
     else
@@ -90,11 +97,13 @@ class Plan < ActiveRecord::Base
   end
 
   def create_mention(result)
-    key = self.body.scan(/(.{6})?\[(#{result.first})\](.{6})?/).join
-    u = User.find_by_username(result)
-
-    unless Mention.find_by_mentioned_user_id_and_surround_text(self.user.id, key) && u.present?
-      u.mentions.create(mentioned_user_id: self.user.id, surround_text: key)
+    if u = User.find_by_username(result)
+      keys = self.body.scan(/(.{6})?\[(#{result.first})\](.{6})?/)
+      keys.each do |key|
+        unless Mention.where(mentioned_user_id: self.user.id, surround_text: key.join).present?
+          u.mentions.create(mentioned_user_id: self.user.id, surround_text: key.join  )
+        end
+      end
     end
   end
 

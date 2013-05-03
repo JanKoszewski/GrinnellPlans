@@ -33,19 +33,11 @@ class PlansController < ApplicationController
   	end
 
     def sanitize_input_markup(submitted_plans_data)
-      remove_possible_javascript(submitted_plans_data)
       replace_date_markup(submitted_plans_data)
       submitted_plans_data
     end
 
     def replace_date_markup(submitted_plans_data)
-      submitted_plans_data["body"].gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.to_s}</b>")
-    end
-
-    def remove_possible_javascript(submitted_plans_data)
-      if possible_javascript = submitted_plans_data["body"].scan(/.*script.*/s).first
-        submitted_plans_data["body"].slice!(possible_javascript.first)
-      end
-      submitted_plans_data
+      submitted_plans_data["body"].gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.strftime('%A %B %e, %Y %l:%M %P')}</b>")
     end
 end
