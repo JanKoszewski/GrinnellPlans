@@ -28,7 +28,7 @@ class PlansController < ApplicationController
   	def ensure_plan_ownership
   		unless current_user.plan == Plan.find_by_permalink(params[:id])
   			redirect_to root_path
-        flash[:error] = "Unauthorized action"
+        flash[:error] = t(:"errors.unauthorized")
   		end
   	end
 

@@ -12,3 +12,5 @@ en:
     logout: "Logout"
   mentions:
     has_mentioned: "%{username} has mentioned you!"
+  errors:
+    unauthorized: "Unauthorized action"

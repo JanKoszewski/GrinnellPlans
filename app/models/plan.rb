@@ -19,8 +19,7 @@ class Plan < ActiveRecord::Base
   end
 
   def scan_for_matches(text)
-    matches = text.scan(/.*?\[(.*?)\].*?/s)
-    matches.delete_if { |result| result.first.blank? }
+    text.scan(/.*?\[(.*?)\].*?/s).delete_if { |result| result.first.blank? }
   end
 
   def unique_matches(text)
@@ -80,7 +79,7 @@ class Plan < ActiveRecord::Base
   def remove_possible_javascript(text)
     possible_javascript = text.scan(/.*script.*/s)
     if possible_javascript.present?
-      possible_javascript.each { |pj| text.slice!(pj) }
+      possible_javascript.each { |script| text.slice!(script) }
     end
     text
   end
@@ -100,7 +99,7 @@ class Plan < ActiveRecord::Base
     if u = User.find_by_username(result)
       keys = self.body.scan(/.{0,30}\[#{result.first}\].{0,30}/)
       keys.each do |key|
-        unless Mention.where(mentioned_user_id: self.user.id, key: key, position: self.body.index(key) + self.change_in_length).present?
+        unless Mention.where(mentioned_user_id: self.user.id, key: key, position: self.body.index(key) + (self.change_in_length || 0)).present?
           u.mentions.create(mentioned_user_id: self.user.id, key: key, position: self.body.index(key))
         end
       end
@@ -108,11 +107,15 @@ class Plan < ActiveRecord::Base
   end
 
   def calculate_previous_length
-    self.previous_length = self.body.length
+    self.previous_length = self.body ? self.body.length : 0
   end
 
   def calculate_length_change
-    self.change_in_length = self.previous_length - self.body.length
+    if self.body.present?
+      self.change_in_length = self.previous_length - self.body.length
+    else
+      self.change_in_length = 0
+    end
   end
 
   def self.search(params)

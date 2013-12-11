@@ -11,7 +11,6 @@ describe PlansController do
   it "redirects to login when no user present" do
     get :show, :id => @user.username
 
-    raise response.inspect
     response.should be_success
   end
 end

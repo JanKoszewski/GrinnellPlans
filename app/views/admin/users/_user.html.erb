@@ -1,6 +1,12 @@
 <li>
   <%= gravatar_for user %>
-  <%= link_to user.username, user %>
+
+  <% if user.approved? %>
+    <%= link_to user.username, plan_path(user.username) %>
+  <% else %>
+    <%= user.username %>
+  <% end %>
+
   <% if current_user.admin? && (current_user != user) %>
     | <%= link_to "delete", admin_user_path(user), method: :delete, :confirm => "Delete \"#{user.username}\"?" %>
     <% if !user.approved? %>

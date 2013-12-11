@@ -17,8 +17,4 @@ class Mention < ActiveRecord::Base
   def unread
     self.read_time.nil?
   end
-
-  def check_position(text)
-
-  end
 end

@@ -1,6 +1,6 @@
 class Admin::UsersController < ApplicationController
 	before_filter :authenticate_user!
-  before_filter :admin_user
+  before_filter :admin_user?
 
 	def index
 		@users = User.all
@@ -8,7 +8,10 @@ class Admin::UsersController < ApplicationController
 
 	def update
     @user = User.find(params[:id])
-    if @user.update_attributes(params[:user]) && create_plan(@user)
+    if @user.update_attributes(params[:user]) && @user.plan
+      flash[:success] = "User #{@user.username} updated"
+      redirect_to admin_users_path
+    elsif @user.update_attributes(params[:user]) && create_plan(@user)
       flash[:success] = "User #{@user.username} updated"
       redirect_to admin_users_path
     else
@@ -24,7 +27,7 @@ class Admin::UsersController < ApplicationController
   end
 
 	private
-		def admin_user
+		def admin_user?
       unless current_user.admin?
         redirect_to root_path
         flash[:error] = "Unauthorized action"
