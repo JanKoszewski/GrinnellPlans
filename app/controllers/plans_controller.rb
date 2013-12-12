@@ -1,13 +1,13 @@
 class PlansController < ApplicationController
 	before_filter :ensure_plan_ownership, :only => [:edit, :update]
+  before_filter :require_plan, :only => [:show]
 
 	def index
     @plans = Plan.all
 	end
 
 	def show
-		@plan = Plan.find_by_permalink(params[:id])
-		Subscription.mark_plan_as_read(current_user.id, @plan.user.id)
+    Subscription.mark_plan_as_read(current_user.id, @plan.user.id)
     Mention.mark_plan_as_read(current_user.id, @plan.user.id)
 	end
 
@@ -39,5 +39,9 @@ class PlansController < ApplicationController
 
     def replace_date_markup(submitted_plans_data)
       submitted_plans_data["body"].gsub!(/.*?\[date\].*?/s, "<b>#{Time.now.strftime('%A %B %e, %Y %l:%M %P')}</b>")
+    end
+
+    def require_plan
+      redirect_to root_path unless (@plan = Plan.find_by_permalink(params[:id]))
     end
 end

@@ -6,6 +6,6 @@ FactoryGirl.define do
     password "password"
     username "test"
     admin false
-    approved false
+    approved true
   end
 end
